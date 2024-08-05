@@ -114,8 +114,6 @@ def train(args):
             loss.backward()
             optimizer.step()
             lr_scheduler.step()
-            if step_count % 5 == 0:
-                print(np.mean(losses))
             step_count += 1
         print('Finished epoch:{} | Loss : {:.4f}'.format(
             epoch_idx + 1,
