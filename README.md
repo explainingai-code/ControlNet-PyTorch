@@ -1,5 +1,24 @@
 ControlNet Implementation in PyTorch
 ========
+## ControlNet Tutorial Video
+<a href="https://www.youtube.com/watch?v=n6CwImm_WDI">
+   <img alt="ControlNet Tutorial" src="https://github.com/user-attachments/assets/00bcedd4-45b9-4c4f-8563-8c00589e6a08"
+   width="400">
+</a>
+
+
+## Sample Output for ControlNet with DDPM on MNIST as an example
+
+Canny Edge Control - Top, Sample - Below
+
+<img src="https://github.com/user-attachments/assets/a1be7f01-858e-4ad3-972e-1061344bba72" width="300">
+
+## Sample Output for ControlNet with LDM on CelebHQ
+Canny Edge Control - Top, Sample - Below
+
+<img src="https://github.com/user-attachments/assets/9d2781d9-b246-4518-b766-6dec74163513" width="400">
+
+___
 
 This repository implements ControlNet in PyTorch for diffusion models.
 As of now, the repo provides code to do the following:
@@ -10,20 +29,6 @@ As of now, the repo provides code to do the following:
 
 
 For autoencoder of Latent Diffusion Model, I provide training and inference code for vae.
-
-
-## ControlNet Tutorial Video
-
-
-___  
-
-
-## Sample Output for ControlNet with DDPM on MNIST as an example
-
-
-## Sample Output for ControlNet with LDM on CelebHQ
-
-___
 
 ## Setup
 * Create a new conda environment with python 3.10 then run below commands
@@ -69,7 +74,7 @@ ControlNet-PyTorch
 * ```config/mnist.yaml``` - Config for MNIST dataset
 * ```config/celebhq.yaml``` - Configuration used for celebhq dataset
 
-Relevant configuration parameters
+<ins>Relevant configuration parameters</ins>
 
 Most parameters are self-explanatory but below I mention couple which are specific to this repo.
 * ```autoencoder_acc_steps``` : For accumulating gradients if image size is too large for larger batch sizes
@@ -97,7 +102,7 @@ Once the config and dataset is setup:
 * For training ddpm on your own dataset 
   * Create your own config and have the path point to images (look at celebhq.yaml for guidance)
   * Create your own dataset class, similar to celeb_dataset.py
-* Call the desired dataset class in training file
+* Call the desired dataset class in training file [here](https://github.com/explainingai-code/ControlNet-PyTorch/blob/main/tools/train_ddpm.py#L40)
 * For training DDPM run ```python -m tools.train_ddpm --config config/mnist.yaml``` for training ddpm with the desire config file
 * For inference run ```python -m tools.sample_ddpm --config config/mnist.yaml``` for generating samples with right config file.
 
@@ -106,7 +111,7 @@ Once the config and dataset is setup:
 * For training controlnet with ddpm on your own dataset 
   * Create your own config and have the path point to images (look at celebhq.yaml for guidance)
   * Create your own dataset class, similar to celeb_dataset.py
-* Call the desired dataset class in training file
+* Call the desired dataset class in training file [here](https://github.com/explainingai-code/ControlNet-PyTorch/blob/main/tools/train_ddpm_controlnet.py#L40)
 * Ensure ```return_hints``` is passed as True in the dataset class initialization
 * For training controlnet run ```python -m tools.train_ddpm_controlnet --config config/mnist.yaml``` for training controlnet ddpm with the desire config file
 * For inference run ```python -m tools.sample_ddpm_controlnet --config config/mnist.yaml``` for generating ddpm samples using canny hints with right config file.
@@ -117,16 +122,16 @@ Once the config and dataset is setup:
 * For training autoencoder on your own dataset 
   * Create your own config and have the path point to images (look at celebhq.yaml for guidance)
   * Create your own dataset class, similar to celeb_dataset.py
-* Call the desired dataset class in training file
+* Call the desired dataset class in training file [here](https://github.com/explainingai-code/ControlNet-PyTorch/blob/main/tools/train_vae.py#L49)
 * For training autoencoder run ```python -m tools.train_vae --config config/celebhq.yaml``` for training autoencoder with the desire config file
-* For inference make sure ```save_latent``` is `True` in the config
+* For inference make sure `save_latent` is `True` in the config
 * For inference run ```python -m tools.infer_vae --config config/celebhq.yaml``` for generating reconstructions and saving latents with right config file.
 
 
 ## Training Unconditional LDM
 Train the autoencoder first and setup dataset accordingly.
 
-For training unconditional LDM ensure the right dataset is used in `train_ldm_vae.py`
+For training unconditional LDM ensure the right dataset is used in `train_ldm_vae.py` [here](https://github.com/explainingai-code/ControlNet-PyTorch/blob/main/tools/train_ldm_vae.py#L43)
 * ```python -m tools.train_ldm_vae --config config/celebhq.yaml``` for training unconditional ldm using right config
 * ```python -m tools.sample_ldm_vae --config config/celebhq.yaml``` for generating images using trained ldm
 
@@ -137,104 +142,11 @@ For training unconditional LDM ensure the right dataset is used in `train_ldm_va
   * Create your own config and have the path point to images (look at celebhq.yaml for guidance)
   * Create your own dataset class, similar to celeb_dataset.py
 * Ensure Autoencoder and LDM have already been trained
-* Call the desired dataset class in training file
+* Call the desired dataset class in training file [here](https://github.com/explainingai-code/ControlNet-PyTorch/blob/main/tools/train_ldm_controlnet.py#L43)
 * Ensure ```return_hints``` is passed as True in the dataset class initialization
-* Ensure ```down_sample_factor``` is correctly computed in the model initialization  
+* Ensure ```down_sample_factor``` is correctly computed in the model initialization [here](https://github.com/explainingai-code/ControlNet-PyTorch/blob/main/tools/train_ldm_controlnet.py#L60)
 * For training controlnet run ```python -m tools.train_ldm_controlnet --config config/celebhq.yaml``` for training controlnet ldm with the desire config file
 * For inference with controlnet run ```python -m tools.sample_ldm_controlnet --config config/celebhq.yaml``` for generating ldm samples using canny hints with right config file.
-
-
-
-
-## Training Conditional LDM
-For training conditional models we need two changes:
-* Dataset classes must provide the additional conditional inputs(see below)
-* Config must be changed with additional conditioning config added
-
-Specifically the dataset `getitem` will return the following:
-* `image_tensor` for unconditional training
-* tuple of `(image_tensor,  cond_input )` for conditional training where cond_input is a dictionary consisting of keys ```{class/text/image}```
-
-### Training Class Conditional LDM
-The repo provides class conditional latent diffusion model training code for mnist dataset, so one
-can use that to follow the same for their own dataset
-
-* Use `mnist_class_cond.yaml` config file as a guide to create your class conditional config file.
-Specifically following new keys need to be modified according to your dataset within `ldm_params`.
-* ```  
-  condition_config:
-    condition_types: ['class']
-    class_condition_config :
-      num_classes : <number of classes: 10 for mnist>
-      cond_drop_prob : <probability of dropping class labels>
-  ```
-* Create a dataset class similar to mnist where the getitem method now returns a tuple of image_tensor and dictionary of conditional_inputs.
-* For class, conditional input will ONLY be the integer class
-* ```
-    (image_tensor, {
-                    'class' : {0/1/.../num_classes}
-                    })
-
-For training class conditional LDM map the dataset to the right class in `train_ddpm_cond` and run the below commands using desired config
-* ```python -m tools.train_ddpm_cond --config config/mnist_class_cond.yaml``` for training class conditional on mnist 
-* ```python -m tools.sample_ddpm_class_cond --config config/mnist.yaml``` for generating images using class conditional trained ddpm
-
-### Training Text Conditional LDM
-The repo provides text conditional latent diffusion model training code for celebhq dataset, so one
-can use that to follow the same for their own dataset
-
-* Use `celebhq_text_cond.yaml` config file as a guide to create your config file.
-Specifically following new keys need to be modified according to your dataset within `ldm_params`.
-* ```  
-    condition_config:
-        condition_types: [ 'text' ]
-        text_condition_config:
-            text_embed_model: 'clip' or 'bert'
-            text_embed_dim: 512 or 768
-            cond_drop_prob: 0.1
-  ```
-* Create a dataset class similar to celebhq where the getitem method now returns a tuple of image_tensor and dictionary of conditional_inputs.
-* For text, conditional input will ONLY be the caption
-* ```
-    (image_tensor, {
-                    'text' : 'a sample caption for image_tensor'
-                    })
-
-For training text conditional LDM map the dataset to the right class in `train_ddpm_cond` and run the below commands using desired config
-* ```python -m tools.train_ddpm_cond --config config/celebhq_text_cond.yaml``` for training text conditioned ldm on celebhq 
-* ```python -m tools.sample_ddpm_text_cond --config config/celebhq_text_cond.yaml``` for generating images using text conditional trained ddpm
-
-### Training Text and Mask Conditional LDM
-The repo provides text and mask conditional latent diffusion model training code for celebhq dataset, so one
-can use that to follow the same for their own dataset and can even use that train a mask only conditional ldm
-
-* Use `celebhq_text_image_cond.yaml` config file as a guide to create your config file.
-Specifically following new keys need to be modified according to your dataset within `ldm_params`.
-* ```  
-    condition_config:
-        condition_types: [ 'text', 'image' ]
-        text_condition_config:
-            text_embed_model: 'clip' or 'bert
-            text_embed_dim: 512 or 768
-            cond_drop_prob: 0.1
-        image_condition_config:
-           image_condition_input_channels: 18
-           image_condition_output_channels: 3
-           image_condition_h : 512 
-           image_condition_w : 512
-           cond_drop_prob: 0.1
-  ```
-* Create a dataset class similar to celebhq where the getitem method now returns a tuple of image_tensor and dictionary of conditional_inputs.
-* For text and mask, conditional input will be caption and mask image
-* ```
-    (image_tensor, {
-                    'text' : 'a sample caption for image_tensor',
-                    'image' : NUM_CLASSES x MASK_H x MASK_W
-                    })
-
-For training text unconditional LDM map the dataset to the right class in `train_ddpm_cond` and run the below commands using desired config
-* ```python -m tools.train_ddpm_cond --config config/celebhq_text_image_cond.yaml``` for training text and mask conditioned ldm on celebhq 
-* ```python -m tools.sample_ddpm_text_image_cond --config config/celebhq_text_image_cond.yaml``` for generating images using text and mask conditional trained ddpm
 
 
 ## Output 
@@ -244,18 +156,20 @@ For every run a folder of ```task_name``` key in config will be created
 
 During training of autoencoder the following output will be saved 
 * Latest Autoencoder and discriminator checkpoint in ```task_name``` directory
-* Sample reconstructions in ```task_name/vqvae_autoencoder_samples```
+* Sample reconstructions in ```task_name/vae_autoencoder_samples```
 
 During inference of autoencoder the following output will be saved
 * Reconstructions for random images in  ```task_name```
-* Latents will be save in ```task_name/vqvae_latent_dir_name``` if mentioned in config
+* Latents will be save in ```task_name/vae_latent_dir_name``` if mentioned in config
 
-During training and inference of ddpm following output will be saved
-* During training of unconditional or conditional DDPM we will save the latest checkpoint in ```task_name``` directory
+During training and inference of unconditional ddpm or ldm following output will be saved:
+* During training we will save the latest checkpoint in ```task_name``` directory
 * During sampling, unconditional sampled image grid for all timesteps in ```task_name/samples/*.png``` . The final decoded generated image will be `x0_0.png`. Images from `x0_999.png` to `x0_1.png` will be latent image predictions of denoising process from T=999 to T=1. Generated Image is at T=0
-* During sampling, class conditionally sampled image grid for all timesteps in ```task_name/cond_class_samples/*.png``` . The final decoded generated image will be `x0_0.png`.  Images from `x0_999.png` to `x0_1.png` will be latent image predictions of denoising process from T=999 to T=1. Generated Image is at T=0
-* During sampling, text only conditionally sampled image grid for all timesteps in ```task_name/cond_text_samples/*.png``` . The final decoded generated image will be `x0_0.png` . Images from `x0_999.png` to `x0_1.png` will be latent image predictions of denoising process from T=999 to T=1. Generated Image is at T=0
-* During sampling, image only conditionally sampled image grid for all timesteps in ```task_name/cond_text_image_samples/*.png``` . The final decoded generated image will be `x0_0.png`. Images from `x0_999.png` to `x0_1.png` will be latent image predictions of denoising process from T=999 to T=1. Generated Image is at T=0
+
+During training and inference of controlnet with ddpm/ldm following output will be saved:
+* During training we will save the latest checkpoint in ```task_name``` directory
+* During sampling, randomly selected hints and generated samples will be saved in ```task_name/hint.png``` and  ```task_name/controlnet_samples/*.png```. The final decoded generated image will be `x0_0.png`. Images from `x0_999.png` to `x0_1.png` will be latent image predictions of denoising process from T=999 to T=1. Generated Image is at T=0
+
 
 
 
