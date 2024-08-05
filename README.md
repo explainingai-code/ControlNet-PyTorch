@@ -6,17 +6,10 @@ ControlNet Implementation in PyTorch
    width="400">
 </a>
 
-
-## Sample Output for ControlNet with DDPM on MNIST as an example
-
+## Sample Output for ControlNet with DDPM on MNIST and with LDM on CelebHQ
 Canny Edge Control - Top, Sample - Below
 
-<img src="https://github.com/user-attachments/assets/a1be7f01-858e-4ad3-972e-1061344bba72" width="300">
-
-## Sample Output for ControlNet with LDM on CelebHQ
-Canny Edge Control - Top, Sample - Below
-
-<img src="https://github.com/user-attachments/assets/9d2781d9-b246-4518-b766-6dec74163513" width="400">
+<img src="https://github.com/user-attachments/assets/a52c53b3-b62e-4535-affa-1ee0d0321223" width="500">
 
 ___
 
