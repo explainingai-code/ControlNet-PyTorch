@@ -43,7 +43,7 @@ train_params:
   task_name: 'celebhq'
   ldm_batch_size: 16
   autoencoder_batch_size: 16
-  disc_start: 15000
+  disc_start: 5000
   disc_weight: 0.5
   codebook_weight: 1
   commitment_beta: 0.2
