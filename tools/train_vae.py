@@ -75,12 +75,14 @@ def train(args):
         model.load_state_dict(torch.load(os.path.join(train_config['task_name'],
                                                       train_config['vae_autoencoder_ckpt_name']),
                                          map_location=device))
+        print('Loaded autoencoder from checkpoint')
 
     if os.path.exists(os.path.join(train_config['task_name'],
                                    train_config['vae_discriminator_ckpt_name'])):
         discriminator.load_state_dict(torch.load(os.path.join(train_config['task_name'],
                                                               train_config['vae_discriminator_ckpt_name']),
                                                  map_location=device))
+        print('Loaded discriminator from checkpoint')
 
     optimizer_d = Adam(discriminator.parameters(), lr=train_config['autoencoder_lr'], betas=(0.5, 0.999))
     optimizer_g = Adam(model.parameters(), lr=train_config['autoencoder_lr'], betas=(0.5, 0.999))
