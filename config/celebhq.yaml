@@ -27,8 +27,8 @@ ldm_params:
 autoencoder_params:
   z_channels: 4
   codebook_size : 8192
-  down_channels : [64, 128, 256]
-  mid_channels : [256]
+  down_channels : [128, 256, 384]
+  mid_channels : [384]
   down_sample : [True, True]
   attn_down : [False, False]
   norm_channels: 32
@@ -42,15 +42,15 @@ train_params:
   seed : 1111
   task_name: 'celebhq'
   ldm_batch_size: 16
-  autoencoder_batch_size: 16
-  disc_start: 5000
+  autoencoder_batch_size: 4
+  disc_start: 7500
   disc_weight: 0.5
   codebook_weight: 1
   commitment_beta: 0.2
   perceptual_weight: 1
   kl_weight: 0.000005
   ldm_epochs: 200
-  autoencoder_epochs: 10
+  autoencoder_epochs: 3
   controlnet_epochs : 15
   num_samples: 2
   num_grid_rows: 2

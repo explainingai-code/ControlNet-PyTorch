@@ -99,7 +99,7 @@ def infer(args):
             part_count = 0
             count = 0
             for idx, im in enumerate(tqdm(data_loader)):
-                encoded_output, _ = model.encode(im.float().to(device))
+                _, encoded_output = model.encode(im.float().to(device))
                 fname_latent_map[im_dataset.images[idx]] = encoded_output.cpu()
                 # Save latents every 1000 images
                 if (count + 1) % 1000 == 0:
