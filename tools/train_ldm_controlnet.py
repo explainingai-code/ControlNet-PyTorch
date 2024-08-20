@@ -107,7 +107,11 @@ def train(args):
         for im, hint in tqdm(data_loader):
             optimizer.zero_grad()
             im = im.float().to(device)
-            if not im_dataset.use_latents:
+            if im_dataset.use_latents:
+                mean, logvar = torch.chunk(im, 2, dim=1)
+                std = torch.exp(0.5 * logvar)
+                im = mean + std * torch.randn(mean.shape).to(device=im.device)
+            else:
                 with torch.no_grad():
                     im, _ = vae.encode(im)
 
