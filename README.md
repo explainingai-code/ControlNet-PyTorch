@@ -165,5 +165,16 @@ During training and inference of controlnet with ddpm/ldm following output will 
 
 
 
-
+## Citations
+```
+@misc{zhang2023addingconditionalcontroltexttoimage,
+      title={Adding Conditional Control to Text-to-Image Diffusion Models}, 
+      author={Lvmin Zhang and Anyi Rao and Maneesh Agrawala},
+      year={2023},
+      eprint={2302.05543},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2302.05543}, 
+}
+```
 
